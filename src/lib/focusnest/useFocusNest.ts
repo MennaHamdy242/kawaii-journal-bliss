@@ -1,4 +1,4 @@
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 import { getState, hydrateFromStorage } from "./state.js";
 import type { AppData } from "./types";
@@ -17,9 +17,7 @@ function wire() {
   wired = true;
   window.addEventListener("state:change", emit);
   window.addEventListener("storage", (e) => {
-    if (e.key === "focusnest-state-v1") {
-      hydrateFromStorage();
-    }
+    if (e.key === "focusnest-state-v1") hydrateFromStorage();
   });
 }
 
@@ -32,18 +30,34 @@ function subscribe(listener: () => void) {
 const getSnapshot = () => version;
 const getServerSnapshot = () => 0;
 
+const EMPTY: AppData = {
+  tasks: [],
+  notes: [],
+  settings: {
+    demoSeeded: false,
+    theme: "system",
+    skin: "sakura",
+    focusSessions: 0,
+    focusStreak: 0,
+    lastFocusDate: "",
+    soundOn: true,
+    compactMode: false,
+  },
+};
+
 /**
  * Reads the live FocusNest LocalStorage-backed state.
  * Storage keys and data shapes are untouched — this only observes them.
  */
 export function useFocusNestData(): { data: AppData; hydrated: boolean } {
   useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const state = getState();
-    if (!state.hydrated) hydrateFromStorage();
+    hydrateFromStorage();
+    setMounted(true);
   }, []);
 
-  const state = getState();
-  return { data: state.data, hydrated: state.hydrated };
+  if (!mounted) return { data: EMPTY, hydrated: false };
+  return { data: getState().data, hydrated: true };
 }
