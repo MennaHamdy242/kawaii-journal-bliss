@@ -7,6 +7,7 @@ const DEFAULT_STATE = {
 };
 
 export function loadState() {
+  if (typeof localStorage === 'undefined') return structuredClone(DEFAULT_STATE);
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return structuredClone(DEFAULT_STATE);
@@ -22,6 +23,7 @@ export function loadState() {
 }
 
 export function saveState(state) {
+  if (typeof localStorage === 'undefined') return;
   try {
     localStorage.setItem(KEY, JSON.stringify(state));
   } catch (error) {
@@ -29,4 +31,4 @@ export function saveState(state) {
   }
 }
 
-export function clearAppState() { localStorage.removeItem(KEY); }
+export function clearAppState() { if (typeof localStorage !== 'undefined') localStorage.removeItem(KEY); }
