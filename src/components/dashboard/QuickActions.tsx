@@ -27,8 +27,8 @@ export function QuickActions() {
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         <ActionButton icon={<IconTasks className="h-5 w-5" />} label="New task" onClick={() => setMode("task")} />
         <ActionButton icon={<IconNotes className="h-5 w-5" />} label="New note" onClick={() => setMode("note")} />
-        <ActionButton icon={<IconMic className="h-5 w-5" />} label="Voice note" href="/notes" />
-        <ActionButton icon={<IconPlus className="h-5 w-5" />} label="All tasks" href="/tasks" />
+        <ActionButton icon={<IconMic className="h-5 w-5" />} label="Voice note" onClick={() => setMode("note")} />
+        <ActionButton icon={<IconPlus className="h-5 w-5" />} label="Add & plan" onClick={() => setMode("task")} />
       </div>
 
       {mode ? (
@@ -61,23 +61,13 @@ function ActionButton({
   icon,
   label,
   onClick,
-  href,
 }: {
   icon: React.ReactNode;
   label: string;
   onClick?: () => void;
-  href?: string;
 }) {
   const cls =
     "flex flex-col items-center gap-1.5 rounded-2xl bg-secondary/70 px-2 py-3 text-[11px] font-bold text-secondary-foreground transition-transform hover:-translate-y-0.5 active:scale-95";
-  if (href) {
-    return (
-      <a href={href} className={cls}>
-        {icon}
-        {label}
-      </a>
-    );
-  }
   return (
     <button type="button" onClick={onClick} className={cls}>
       {icon}

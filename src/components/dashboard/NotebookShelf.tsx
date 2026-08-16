@@ -40,19 +40,12 @@ export function NotebookShelf({ notes }: { notes: Note[] }) {
     <section className="paper p-5">
       <div className="mb-3 flex items-baseline justify-between">
         <p className="label-caps">Notebook shelf</p>
-        <a href="/notes" className="text-xs font-bold text-primary">
-          open shelf
-        </a>
+        <span className="text-xs font-bold text-muted-foreground">{notes.length} notebooks</span>
       </div>
 
       <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2">
         {notes.slice(0, 6).map((note) => (
-          <a
-            key={note.id}
-            href="/notes"
-            className="group w-28 shrink-0"
-            aria-label={`Open ${note.title || "Little note"}`}
-          >
+          <article key={note.id} className="group w-28 shrink-0">
             <div className="relative overflow-hidden rounded-2xl shadow-[var(--shadow-paper)] transition-transform group-hover:-translate-y-1">
               <img
                 src={coverArt[note.cover] ?? coverRibbon}
@@ -71,7 +64,7 @@ export function NotebookShelf({ notes }: { notes: Note[] }) {
             <p className="truncate text-[10px] text-muted-foreground">
               {plainPreview(note.content) || formatDateTime(note.updatedAt)}
             </p>
-          </a>
+          </article>
         ))}
       </div>
     </section>
@@ -86,7 +79,7 @@ export function RecentNotes({ notes }: { notes: Note[] }) {
       <ul className="space-y-3">
         {notes.slice(0, 3).map((note) => (
           <li key={note.id}>
-            <a href="/notes" className="block">
+            <div className="block">
               <p className="text-sm font-semibold text-foreground">{note.title || "Little note"}</p>
               <p className="truncate text-xs text-muted-foreground">
                 {plainPreview(note.content) ||
@@ -94,7 +87,7 @@ export function RecentNotes({ notes }: { notes: Note[] }) {
                   "A tiny page waiting for you"}
               </p>
               <p className="mt-0.5 text-[10px] text-muted-foreground">{formatDateTime(note.updatedAt)}</p>
-            </a>
+            </div>
           </li>
         ))}
       </ul>
