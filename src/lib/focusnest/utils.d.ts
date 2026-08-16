@@ -1,0 +1,15 @@
+export function uid(prefix?: string): string;
+export function todayISO(): string;
+export function addDaysISO(days: number): string;
+export function formatDate(value?: string, options?: Intl.DateTimeFormatOptions): string;
+export function formatDateTime(value?: string): string;
+export function escapeHTML(value?: string): string;
+export function parseTags(value?: string): string[];
+export function tagsText(tags?: string[]): string;
+export function priorityRank(p?: string): number;
+export function safeText(value?: string): string;
+export function formatBytes(bytes?: number): string;
+export function formatDuration(seconds?: number): string;
+export function debounce<T extends (...args: never[]) => void>(fn: T, delay?: number): T;
+export function isToday(date?: string): boolean;
+export function isUpcoming(date?: string): boolean;
