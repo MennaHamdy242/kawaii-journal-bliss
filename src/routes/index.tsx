@@ -116,7 +116,7 @@ function DesignDirection() {
   const [theme, setTheme] = useState<string>("sakura");
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
+    document.documentElement.dataset["theme"] = theme;
   }, [theme]);
 
   return (
