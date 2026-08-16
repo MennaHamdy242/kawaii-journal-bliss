@@ -53,7 +53,7 @@ export function PlannerHeader({
 
   return (
     <header className="paper taped relative overflow-hidden px-5 pb-6 pt-9 sm:px-8">
-      <Sticker name="cloud" className="pointer-events-none absolute -left-5 bottom-0 w-24 opacity-60" />
+      <Sticker name="cloud" className="pointer-events-none absolute -left-6 -bottom-5 w-20 opacity-40" />
       <Sticker name="star" className="pointer-events-none absolute right-5 top-6 w-7 animate-twinkle" />
 
       <div className="flex items-start justify-between gap-4">
