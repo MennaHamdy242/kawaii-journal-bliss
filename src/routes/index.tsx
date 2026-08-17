@@ -145,9 +145,11 @@ function Dashboard() {
       ) : null}
 
       <div className="mt-4 space-y-4">
-        <NotebookShelf notes={shelfNotes} />
-        <RecentNotes notes={recentNotes} />
+        <NotebookShelf notes={shelfNotes} onOpen={setOpenNoteId} />
+        <RecentNotes notes={recentNotes} onOpen={setOpenNoteId} />
       </div>
+
+      {openNote ? <NoteEditorSheet key={openNote.id} note={openNote} onClose={() => setOpenNoteId(null)} /> : null}
 
       <footer className="mt-10 flex items-center justify-center gap-2">
         <Mascot mood="heart" className="h-12 w-auto" />
