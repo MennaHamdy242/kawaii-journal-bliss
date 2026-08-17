@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { Mascot } from "@/components/design/Mascot";
 import { Sticker } from "@/components/design/Sticker";
@@ -8,6 +8,7 @@ import { NotebookShelf, RecentNotes } from "@/components/dashboard/NotebookShelf
 import { PlannerHeader } from "@/components/dashboard/PlannerHeader";
 import { ProgressCard } from "@/components/dashboard/ProgressCard";
 import { QuickActions } from "@/components/dashboard/QuickActions";
+import { NoteEditorSheet } from "@/components/notes/NoteEditorSheet";
 import { TaskSlip } from "@/components/dashboard/TaskSlip";
 import { useFocusNestData } from "@/lib/focusnest/useFocusNest";
 import { toggleTaskComplete } from "@/lib/focusnest/tasks.js";
@@ -45,6 +46,7 @@ function byPriorityThenDate(a: Task, b: Task) {
 
 function Dashboard() {
   const { data, hydrated } = useFocusNestData();
+  const [openNoteId, setOpenNoteId] = useState<string | null>(null);
 
   const { todayTasks, upcoming, doneToday, totalToday, favorites, recentNotes, shelfNotes } = useMemo(() => {
     const tasks: Task[] = data.tasks ?? [];
@@ -69,6 +71,8 @@ function Dashboard() {
   }, [data]);
 
   const settings = data.settings;
+  // Always read the live note by id so edits/deletes stay in sync with the store.
+  const openNote = openNoteId ? (data.notes ?? []).find((n) => n.id === openNoteId) ?? null : null;
 
   return (
     <main className="mx-auto max-w-3xl px-4 pb-24 pt-6 sm:px-6">
@@ -145,9 +149,11 @@ function Dashboard() {
       ) : null}
 
       <div className="mt-4 space-y-4">
-        <NotebookShelf notes={shelfNotes} />
-        <RecentNotes notes={recentNotes} />
+        <NotebookShelf notes={shelfNotes} onOpen={setOpenNoteId} />
+        <RecentNotes notes={recentNotes} onOpen={setOpenNoteId} />
       </div>
+
+      {openNote ? <NoteEditorSheet key={openNote.id} note={openNote} onClose={() => setOpenNoteId(null)} /> : null}
 
       <footer className="mt-10 flex items-center justify-center gap-2">
         <Mascot mood="heart" className="h-12 w-auto" />
