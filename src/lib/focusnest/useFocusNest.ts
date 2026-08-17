@@ -48,9 +48,12 @@ const EMPTY: AppData = {
 /**
  * Reads the live FocusNest LocalStorage-backed state.
  * Storage keys and data shapes are untouched — this only observes them.
+ * The legacy store mutates `data` in place, so we hand React a fresh
+ * shallow snapshot on every version bump; otherwise memoised consumers
+ * would never see new tasks/notes.
  */
 export function useFocusNestData(): { data: AppData; hydrated: boolean } {
-  useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const version = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -58,6 +61,16 @@ export function useFocusNestData(): { data: AppData; hydrated: boolean } {
     setMounted(true);
   }, []);
 
-  if (!mounted) return { data: EMPTY, hydrated: false };
-  return { data: getState().data, hydrated: true };
+  return useMemo(() => {
+    if (!mounted) return { data: EMPTY, hydrated: false };
+    const live = getState().data;
+    return {
+      data: {
+        tasks: [...(live.tasks ?? [])],
+        notes: [...(live.notes ?? [])],
+        settings: { ...live.settings },
+      },
+      hydrated: true,
+    };
+  }, [mounted, version]);
 }
