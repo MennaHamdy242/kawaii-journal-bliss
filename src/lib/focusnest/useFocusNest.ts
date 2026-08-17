@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 
 import { getState, hydrateFromStorage } from "./state.js";
 import type { AppData } from "./types";
