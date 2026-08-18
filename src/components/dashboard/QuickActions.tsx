@@ -1,15 +1,18 @@
 import { useState } from "react";
 
 import { IconMic, IconNotes, IconPlus, IconTasks } from "@/components/design/icons";
+import { VoiceNoteSheet } from "@/components/notes/VoiceNoteSheet";
+import { PlanSheet } from "@/components/tasks/PlanSheet";
 import { createTask } from "@/lib/focusnest/tasks.js";
 import { createNote } from "@/lib/focusnest/notes.js";
 import { todayISO } from "@/lib/focusnest/utils.js";
 
 type Mode = "task" | "note" | null;
 
-export function QuickActions() {
+export function QuickActions({ onOpenNote }: { onOpenNote?: (id: string) => void } = {}) {
   const [mode, setMode] = useState<Mode>(null);
   const [value, setValue] = useState("");
+  const [sheet, setSheet] = useState<"voice" | "plan" | null>(null);
 
   const submit = () => {
     const text = value.trim();
@@ -27,12 +30,18 @@ export function QuickActions() {
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         <ActionButton icon={<IconTasks className="h-5 w-5" />} label="New task" onClick={() => setMode("task")} />
         <ActionButton icon={<IconNotes className="h-5 w-5" />} label="New note" onClick={() => setMode("note")} />
-        <ActionButton icon={<IconMic className="h-5 w-5" />} label="Voice note" onClick={() => setMode("note")} />
-        <ActionButton icon={<IconPlus className="h-5 w-5" />} label="Add & plan" onClick={() => setMode("task")} />
+        <ActionButton icon={<IconMic className="h-5 w-5" />} label="Voice note" onClick={() => { setMode(null); setSheet("voice"); }} />
+        <ActionButton icon={<IconPlus className="h-5 w-5" />} label="Add & plan" onClick={() => { setMode(null); setSheet("plan"); }} />
       </div>
+
+      {sheet === "voice" ? (
+        <VoiceNoteSheet onClose={() => setSheet(null)} onSaved={(id) => onOpenNote?.(id)} />
+      ) : null}
+      {sheet === "plan" ? <PlanSheet onClose={() => setSheet(null)} /> : null}
 
       {mode ? (
         <div className="mt-4 flex items-center gap-2 rounded-2xl border border-dashed border-primary/40 bg-secondary/50 p-2">
+
           <input
             autoFocus
             value={value}
