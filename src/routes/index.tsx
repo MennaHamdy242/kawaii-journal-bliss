@@ -88,7 +88,7 @@ function Dashboard() {
       </div>
 
       <div className="mt-4">
-        <QuickActions />
+        <QuickActions onOpenNote={setOpenNoteId} />
       </div>
 
       {/* Today */}
