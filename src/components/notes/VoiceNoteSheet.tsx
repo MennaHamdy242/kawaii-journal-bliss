@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { Mascot } from "@/components/design/Mascot";
 import { Sticker } from "@/components/design/Sticker";
@@ -26,15 +27,20 @@ export function VoiceNoteSheet({ onClose, onSaved }: { onClose: () => void; onSa
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const savedRef = useRef(false);
+  // Latest pending blob/url, read only by the unmount cleanup.
+  const pendingRef = useRef<{ attachmentId: string | null; url: string | null }>({ attachmentId: null, url: null });
+  pendingRef.current = { attachmentId: attachment?.id ?? null, url: previewUrl };
 
-  // Discard the orphan blob if the user leaves without saving.
+  // Discard the orphan blob only if the user leaves without saving.
   useEffect(() => {
     return () => {
       recorderRef.current?.cancel();
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-      if (attachment && !savedRef.current) void removeAttachment(attachment.id).catch(() => {});
+      const { attachmentId, url } = pendingRef.current;
+      if (url) URL.revokeObjectURL(url);
+      if (attachmentId && !savedRef.current) void removeAttachment(attachmentId).catch(() => {});
     };
-  }, [attachment, previewUrl]);
+  }, []);
+
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -96,7 +102,7 @@ export function VoiceNoteSheet({ onClose, onSaved }: { onClose: () => void; onSa
     onClose();
   };
 
-  return (
+  const sheet = (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/30 backdrop-blur-[2px] sm:items-center"
       role="dialog"
@@ -182,4 +188,7 @@ export function VoiceNoteSheet({ onClose, onSaved }: { onClose: () => void; onSa
       </div>
     </div>
   );
+
+  if (typeof document === "undefined") return null;
+  return createPortal(sheet, document.body);
 }
