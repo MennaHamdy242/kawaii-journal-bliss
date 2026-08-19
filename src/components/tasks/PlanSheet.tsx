@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { Mascot } from "@/components/design/Mascot";
 import { Sticker } from "@/components/design/Sticker";
@@ -60,7 +61,7 @@ export function PlanSheet({ onClose }: { onClose: () => void }) {
     onClose();
   };
 
-  return (
+  const sheet = (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/30 backdrop-blur-[2px] sm:items-center"
       role="dialog"
@@ -206,6 +207,9 @@ export function PlanSheet({ onClose }: { onClose: () => void }) {
       </div>
     </div>
   );
+
+  if (typeof document === "undefined") return null;
+  return createPortal(sheet, document.body);
 }
 
 function chip(active: boolean) {
